@@ -1,0 +1,148 @@
+<div class="mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Đồ án của tôi</h2>
+        <a href="/me/trash/projects" class="btn btn-danger">Đồ án đã xóa (<%= deletedCount %>)</a>
+    </div>
+    
+    <div class="d-flex justify-content-between">
+        <div class="d-flex mb-3 gap-2 align-items-center justify-content-between">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="checkbox-all">
+                <label class="form-check-label" for="checkbox-all">
+                    Chọn tất cả
+                </label>
+            </div>
+            
+            <select class="form-select form-select-sm opt-hanhdong" name="action" required form="container-form">
+                <option selected align="center" value="">----Chọn hành động----</option>
+                <option value="delete">Xóa</option>
+            </select>
+            <button class="btn btn-primary btn-sm check-all-btn disabled" form="container-form">Áp dụng</button>
+        </div>
+        
+        <div class="d-flex justify-content-end align-items-center">
+            <form class="d-flex" method="GET" action="/me/stored/projects">
+                <input class="form-control me-2" name="q" type="search" placeholder="Tìm kiếm đồ án..." aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Tìm</button>
+            </form>
+        </div>
+    </div>
+  
+    <form name="container-form" method="POST" action="/projects/handle-form" id="container-form">
+        <table class="table table-hover" style="border: 1px solid black;">
+            <thead>
+                <tr>
+                    <th scope="col" class="text-center"></th>
+                    <th scope="col">STT</th>
+                    <th scope="col">
+                        Tên đồ án
+                        <%- sortable('title', _sort) %>
+                    </th>
+                    <th scope="col">
+                        Sinh viên
+                        <%- sortable('studentName', _sort) %>
+                    </th>
+                    <th scope="col">
+                        Thời gian tạo
+                        <%- sortable('createdAt', _sort) %>
+                    </th>
+                    <th scope="col">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (projects && projects.length > 0) { %>
+                    <% projects.forEach(function(project, index) { %>
+                    <tr>
+                        <td class="text-center">
+                            <input class="form-check-input" type="checkbox" name="projectIds[]" value="<%= project._id %>">
+                        </td>
+                        <th scope="row"><%= index + 1 %></th>
+                        <td><%= project.title %></td>
+                        <td><%= project.studentName %></td>
+                        <td><%= project.createdAt.toLocaleDateString('vi-VN') %></td>
+                        <td>
+                            <a href="/projects/<%= project._id %>/edit" class="btn btn-warning btn-sm">Sửa</a>
+                            <a href="#" class="btn btn-danger btn-sm" data-id="<%= project._id %>" data-bs-toggle="modal" data-bs-target="#delete-project">Xóa</a> 
+                        </td>
+                    </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="6" class="text-center py-4">
+                            <strong>Bạn chưa đăng đồ án nào.</strong><br>
+                            <a href="/projects/create" class="btn btn-primary mt-2">Đăng đồ án mới</a>
+                        </td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </form>
+</div>
+
+<div id="delete-project" class="modal fade" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Xác nhận đưa vào thùng rác</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Bạn có chắc chắn muốn xóa đồ án này không?</p>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-delete-project" type="button" class="btn btn-danger">Chắc chắn xóa</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<form name="delete-project-form" method="POST"></form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var projectId;
+        var deleteForm = document.forms['delete-project-form'];
+        var btnDeleteProject = document.getElementById('btn-delete-project');
+        
+        // Lưu ý: Đoạn này bạn đang dùng jQuery ($). 
+        // Đảm bảo trong file main.ejs bạn đã nhúng CDN của jQuery rồi nhé!
+        var checkBoxAll = $('#checkbox-all');
+        var projectItemCheckBox = $('input[name="projectIds[]"]');
+        var checkAllSubmitBtn = $('.check-all-btn');
+
+        var exampleModal = document.getElementById('delete-project');
+        exampleModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            projectId = button.getAttribute('data-id');
+        });
+
+        // Xóa một đồ án
+        btnDeleteProject.onclick = function() {
+            deleteForm.action = '/projects/' + projectId + '?_method=DELETE';
+            deleteForm.submit();
+        }
+
+        // Xử lý Checkbox All
+        checkBoxAll.change(function() {
+            var isChecked = $(this).is(':checked');
+            projectItemCheckBox.prop('checked', isChecked);
+            renderCheckAllSubmitBtn();
+        });
+
+        projectItemCheckBox.change(function(){
+            var isCheckedAll = projectItemCheckBox.length === $('input[name="projectIds[]"]:checked').length;
+            checkBoxAll.prop('checked', isCheckedAll);
+            renderCheckAllSubmitBtn();
+        });
+
+        function renderCheckAllSubmitBtn(){
+            var checkCount = $('input[name="projectIds[]"]:checked').length;
+            if(checkCount > 0){
+                checkAllSubmitBtn.removeClass('disabled');
+            } else {
+                checkAllSubmitBtn.addClass('disabled');
+            }
+        }
+    });
+</script>

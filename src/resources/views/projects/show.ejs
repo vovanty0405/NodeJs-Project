@@ -1,0 +1,64 @@
+<div class="mt-4 mb-5">
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <h1 class="fw-bold mb-4 text-primary"><%= project.title %></h1>
+            
+            <% if (project.image) { %>
+                <img src="<%= project.image %>" alt="<%= project.title %>" class="img-fluid rounded shadow-sm mb-4 w-100" style="max-height: 500px; object-fit: cover; border: 1px solid #dee2e6;">
+            <% } %>
+
+            <h4 class="border-bottom pb-2 mt-4">Mô tả đồ án</h4>
+            <p class="fs-5 mt-3" style="white-space: pre-line; line-height: 1.8;">
+                <%= project.description %>
+            </p>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm sticky-top" style="top: 20px;">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="card-title mb-0 py-1"><i class="bi bi-info-circle me-2"></i>Thông tin chi tiết</h5>
+                </div>
+                <div class="card-body">
+                    
+                    <p class="card-text mb-3">
+                        <strong class="text-muted d-block mb-1">Sinh viên thực hiện:</strong>
+                        <span class="fs-6 fw-semibold"><i class="bi bi-person-badge me-2 text-primary"></i><%= project.studentName %></span> <br>
+                        <span class="ms-4 text-secondary">(MSSV: <%= project.studentId %>)</span>
+                    </p>
+                    
+                    <p class="card-text mb-3">
+                        <strong class="text-muted d-block mb-1">Công nghệ sử dụng:</strong>
+                        <% if (project.techStack) { %>
+                            <% project.techStack.split(',').forEach(function(tech) { %>
+                                <span class="badge bg-secondary me-1 mb-1 px-2 py-1"><%= tech.trim() %></span>
+                            <% }) %>
+                        <% } else { %>
+                            <span class="text-muted fst-italic">Chưa cập nhật</span>
+                        <% } %>
+                    </p>
+
+                    <p class="card-text mb-4">
+                        <strong class="text-muted d-block mb-1">Trạng thái:</strong>
+                        <span class="badge bg-success px-2 py-1"><%= project.status || 'Đang thực hiện' %></span>
+                    </p>
+
+                    <hr>
+
+                    <% if (project.githubLink) { %>
+                        <a href="<%= project.githubLink %>" target="_blank" class="btn btn-dark w-100 mb-2 py-2">
+                            <i class="bi bi-github me-2"></i> Xem mã nguồn GitHub
+                        </a>
+                    <% } else { %>
+                        <button class="btn btn-outline-secondary w-100 mb-2 py-2" disabled>
+                            <i class="bi bi-github me-2"></i> Chưa có link GitHub
+                        </button>
+                    <% } %>
+
+                    <a href="/" class="btn btn-outline-primary w-100 py-2">
+                        <i class="bi bi-house-door me-2"></i> Quay lại danh sách
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

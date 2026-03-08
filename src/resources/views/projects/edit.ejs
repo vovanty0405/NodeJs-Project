@@ -1,0 +1,29 @@
+<div class="mt-4">
+    <h2>Cập nhật đồ án</h2>
+    
+    <form action="/projects/<%= project._id %>?_method=PUT" method="POST">
+        
+        <div class="mb-3">
+            <label for="title" class="form-label">Tên Đồ Án: </label>
+            <input type="text" class="form-control" id="title" name="title" value="<%= project.title %>">
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Mô Tả: </label>
+            <textarea class="form-control" id="description" name="description" rows="3"><%= project.description %></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="studentName" class="form-label">Sinh viên thực hiện: </label>
+            <input type="text" class="form-control" id="studentName" name="studentName" value="<%= project.studentName %>">
+        </div>
+
+        <div class="mb-3">
+            <label for="techStack" class="form-label">Công nghệ: </label>
+            <input type="text" class="form-control" id="techStack" name="techStack" value="<%= project.techStack %>">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Lưu Cập Nhật</button>
+        <a href="/me/stored/projects" class="btn btn-secondary">Hủy</a>
+    </form>
+</div>
