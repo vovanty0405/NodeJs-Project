@@ -3,7 +3,8 @@ const path = require('path')
 const morgan = require('morgan');
 const methodOverride = require('method-override');
 const expressLayouts = require('express-ejs-layouts');
-const SortMiddleware = require('./app/middlewares/SortMiddlewares')
+const SortMiddleware = require('./app/middlewares/SortMiddlewares');
+const errorHandler = require('./app/middlewares/errorHandler');
 const app = express()
 const port = 3000
 
@@ -52,6 +53,8 @@ app.use(express.urlencoded({ extended: true }));
 // 3. ĐỊNH NGHĨA ROUTE (Bắt buộc phải đặt dưới phần cấu hình)
 const route = require('./routes');
 route(app);
+
+app.use(errorHandler);
 
 // 4. CHẠY SERVER
 app.listen(port, () => {
